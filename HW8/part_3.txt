@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+char* remove_duplicates (char* str)
+{
+  int skip_number=1;
+  if (*str=='\0')
+  {
+    return str-1;
+  }
+  if (str[0] == str[1])
+  {
+    int i =0;
+    while (str[i] != '\0')
+    {
+      str[i+1]=str[i+2];
+      i++;
+    }
+    skip_number=0;  
+  }
+  remove_duplicates(str+skip_number);
+  return str-1;
+}
+
+int main(void) {
+  char str[] = "Thiis is not completely misspelled butt we wannnnnnnt to fix it";
+  remove_duplicates(str);
+  printf("%s",str);
+  return 0;
+}

@@ -1,0 +1,125 @@
+#include <stdio.h>
+#define N 8
+int isValid(int x, int y)
+{
+	if (x < 0 || y < 0 || x >= N || y >= N)
+		return 0;
+	return 1;
+}
+int is_full(int visited[N][N])
+{
+  int i,j;
+  for(i=0;i<N;i++)
+  {
+    for(j=0;j<N;j++)
+    {
+      if (visited[i][j]==-1)
+      {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+void print_recursive(int visited[N][N],int x, int y)
+{
+  if (x!=0 || y!=0)
+  {
+    int orientation = visited[x][y];
+  	switch (orientation)
+    {
+      case 1: x=x-2;y=y-1;break;
+      case 2: x=x-1;y=y+2;break;
+      case 3: x=x+2;y=y+1;break;
+      case 4: x=x+1;y=y-2;break;
+      case 5: x=x-1;y=y-2;break;
+      case 6: x=x-2;y=y+1;break;
+      case 7: x=x+1;y=y+2;break;
+      case 8: x=x+2;y=y-1;break;
+    }
+    print_recursive(visited, x, y);
+    printf("O%d -",visited[x][y]);
+  }
+
+}
+
+void print_field(int visited[N][N])
+{
+  int i,j;
+  printf("------------------\n");
+  for (i=0;i<N;i++)
+  {
+    for(j=0;j<N;j++)
+      printf("%d ",visited[i][j]);
+    printf("\n");
+  }
+  printf("------------------\n");
+}
+void install_pipes (int visited[N][N], int x, int y, int orientation)
+{
+  //print_field(visited);
+/*	switch (orientation)
+  {
+    case 1: x=x+2;y=y+1;break;
+    case 2: x=x+1;y=y-2;break;
+    case 3: x=x-2;y=y-1;break;
+    case 4: x=x-1;y=y+2;break;
+    case 5: x=x+1;y=y+2;break;
+    case 6: x=x+2;y=y-1;break;
+    case 7: x=x-1;y=y-2;break;
+    case 8: x=x-2;y=y+1;break;
+  }
+*/
+  visited[x][y] = orientation;
+	if (is_full(visited))
+	{
+    print_recursive(visited, x, y);
+    printf("\n");
+    print_field(visited);
+    printf("\n");
+		visited[x][y] = -1;
+		return;
+	}
+
+	// check for all 8 possible movements for a knight
+	// and recur for each valid movement
+  int temp_x, temp_y;
+	for (int k = 1; k < 9; k++)
+	{
+    switch (k)
+    {
+      case 1: temp_x=x+2;temp_y=y+1;break;
+      case 2: temp_x=x+1;temp_y=y-2;break;
+      case 3: temp_x=x-2;temp_y=y-1;break;
+      case 4: temp_x=x-1;temp_y=y+2;break;
+      case 5: temp_x=x+1;temp_y=y+2;break;
+      case 6: temp_x=x+2;temp_y=y-1;break;
+      case 7: temp_x=x-1;temp_y=y-2;break;
+      case 8: temp_x=x-2;temp_y=y+1;break;
+    }
+
+		// if new position is a valid and not visited yet
+    //printf("\n x=%d, y=%d, k = %d \n",x,y,k);
+		if (isValid(temp_x, temp_y) && visited[temp_x][temp_y]==-1)
+			install_pipes(visited, temp_x, temp_y, k);
+	}
+
+	// backtrack from current square and remove it from current path
+	visited[x][y] = -1;
+}
+void init_array(int visited[N][N])
+{
+  int i,j;
+  for (i=0;i<N;i++)
+  {
+    for(j=0;j<N;j++)
+      visited[i][j]=-1;
+  }
+  visited[0][0]=0;
+}
+int main(void) {
+  int visited[N][N];
+  init_array(visited);
+  install_pipes(visited, 0, 0, 1);
+  return 0;
+}
